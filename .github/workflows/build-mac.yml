@@ -10,10 +10,24 @@ jobs:
     runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
+
+      - name: Cache Homebrew
+        uses: actions/cache@v3
+        with:
+          path: $(brew --prefix)
+          key: ${{ runner.os }}-homebrew-${{ hashFiles('.config/brew/Brewfile') }}
+
+      - name: Install Dependencies
+        run: |
+          brew update --preinstall
+          brew install ninja
+
       - name: Build OpenCV
         run: ./deps.opencv/build-opencv-macos.zsh
+
       - name: Build FastDeploy
         run: ./deps.fastdeploy/build-fastdeploy-macos.zsh
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
