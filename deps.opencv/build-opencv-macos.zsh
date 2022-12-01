@@ -29,15 +29,18 @@ fi
 echo "Building OpenCV ${OPENCV_VER}"
 
 cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
+    -DBUILD_JAVA=OFF \
     -DBUILD_opencv_apps=OFF \
+    -DBUILD_opencv_python3=OFF \
     -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_ZLIB=OFF \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}" \
     -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
     -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+    -DOPENCV_FORCE_3RDPARTY_BUILD=ON \
     -DWITH_FFMPEG=OFF \
-    -DWITH_OPENEXR=OFF \
+    -DWITH_IPP=OFF \
     -DWITH_PROTOBUF=OFF
 cmake --build "${BUILD_PATH}"
 cmake --install "${BUILD_PATH}"
