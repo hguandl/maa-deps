@@ -26,23 +26,41 @@ fi
 
 # ----------  BUILD  ----------
 
-echo "Building OpenCV ${OPENCV_VER}"
+function build_architecture() {
+    ARCH=$1
+    echo "Building OpenCV ${OPENCV_VER} for ${ARCH}"
 
-cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
-    -DBUILD_JAVA=OFF \
-    -DBUILD_opencv_apps=OFF \
-    -DBUILD_opencv_python3=OFF \
-    -DBUILD_SHARED_LIBS=OFF \
-    -DBUILD_ZLIB=OFF \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}" \
-    -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
-    -DOPENCV_FORCE_3RDPARTY_BUILD=ON \
-    -DWITH_FFMPEG=OFF \
-    -DWITH_IPP=OFF \
-    -DWITH_PROTOBUF=OFF
-cmake --build "${BUILD_PATH}"
-cmake --install "${BUILD_PATH}"
+    cmake -S "${SRC_PATH}" -B "${BUILD_PATH}/${ARCH}" -GNinja \
+        -DBUILD_JAVA=OFF \
+        -DBUILD_opencv_apps=OFF \
+        -DBUILD_opencv_python3=OFF \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DBUILD_ZLIB=OFF \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX="${BUILD_PATH}/opencv-install/${ARCH}" \
+        -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+        -DOPENCV_FORCE_3RDPARTY_BUILD=ON \
+        -DWITH_FFMPEG=OFF \
+        -DWITH_IPP=OFF \
+        -DWITH_PROTOBUF=OFF
+
+    cmake --build "${BUILD_PATH}/${ARCH}"
+    cmake --install "${BUILD_PATH}/${ARCH}"
+}
+
+build_architecture "arm64"
+build_architecture "x86_64"
+
+echo "Creating universal binary"
+pushd "${BUILD_PATH}/opencv-install/arm64"
+find . -type f -name "*.a" | while read i; do
+    lipo -create -output $i $i ../x86_64/$i
+done
+popd
+
+# ----------  INSTALL  ----------
+
+rsync -a "${BUILD_PATH}/opencv-install/arm64/" "${INSTALL_PATH}/"
 
 echo "OpenCV build complete."
