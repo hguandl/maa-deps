@@ -32,6 +32,7 @@ function build_architecture() {
 
     cmake -S "${SRC_PATH}" -B "${BUILD_PATH}/${ARCH}" -GNinja \
         -DBUILD_JAVA=OFF \
+        -DBUILD_ITT=OFF \
         -DBUILD_opencv_apps=OFF \
         -DBUILD_opencv_python3=OFF \
         -DBUILD_SHARED_LIBS=OFF \
