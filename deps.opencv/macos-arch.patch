@@ -1,0 +1,18 @@
+diff --git a/cmake/OpenCVDetectCXXCompiler.cmake b/cmake/OpenCVDetectCXXCompiler.cmake
+index 7f229cde96..ba2e002dcb 100644
+--- a/cmake/OpenCVDetectCXXCompiler.cmake
++++ b/cmake/OpenCVDetectCXXCompiler.cmake
+@@ -128,6 +128,13 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND AARCH64
+   endif()
+ endif()
+ 
++# Workaround for macOS cross-compilation
++if(CMAKE_OSX_ARCHITECTURES MATCHES ".*x86_64.*")
++  set(X86_64 1)
++endif()
++if(CMAKE_OSX_ARCHITECTURES MATCHES ".*arm64.*")
++  set(AARCH64 1)
++endif()
+ 
+ # Similar code exists in OpenCVConfig.cmake
+ if(NOT DEFINED OpenCV_STATIC)

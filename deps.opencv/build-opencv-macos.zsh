@@ -24,6 +24,11 @@ if [ ! -f "${SRC_PATH}/CMakeLists.txt" ]; then
     curl -fSL -o- https://github.com/opencv/opencv/archive/${OPENCV_VER}.tar.gz | tar -C ${SRC_ROOT} -zxf -
 fi
 
+## ----------  PATCH  ----------
+pushd ${SRC_PATH}
+patch -p1 -i ${PROJECT_PATH}/deps.opencv/macos-arch.patch
+popd
+
 # ----------  BUILD  ----------
 
 echo "Building OpenCV ${OPENCV_VER}"
@@ -36,13 +41,14 @@ cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
     -DBUILD_ZLIB=OFF \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}" \
+    -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
     -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
     -DOPENCV_FORCE_3RDPARTY_BUILD=ON \
     -DWITH_FFMPEG=OFF \
     -DWITH_IPP=OFF \
     -DWITH_PROTOBUF=OFF
 
-cmake --build "${BUILD_PATH}/${ARCH}"
-cmake --install "${BUILD_PATH}/${ARCH}"
+cmake --build "${BUILD_PATH}"
+cmake --install "${BUILD_PATH}"
 
 echo "OpenCV build complete."
