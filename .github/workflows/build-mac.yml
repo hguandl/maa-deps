@@ -28,8 +28,16 @@ jobs:
       - name: Build FastDeploy
         run: ./deps.fastdeploy/build-fastdeploy-macos.zsh
 
+      - name: Package Libraries
+        run: |
+          mkdir -p maa-deps-macos-universal/lib
+          cp maa-deps-macos/lib/libopencv*.a maa-deps-macos-universal/lib
+          cp maa-deps-macos/lib/libfastdeploy.0.0.0.dylib maa-deps-macos-universal/lib
+          cp maa-deps-macos/*.cmake maa-deps-macos-universal
+          find maa-deps-macos/third_libs/install -type f -name "*.dylib" '!' -path "*dSYM*" | xargs -I '{}' cp '{}' maa-deps-macos-universal/lib
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: maa-deps-macos
-          path: maa-deps-macos
+          name: maa-deps-macos-universal
+          path: maa-deps-macos-universal
