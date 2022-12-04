@@ -38,7 +38,7 @@ cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
     -DBUILD_opencv_apps=OFF \
     -DBUILD_opencv_python3=OFF \
     -DBUILD_SHARED_LIBS=OFF \
-    -DBUILD_ZLIB=OFF \
+    -DBUILD_ZLIB=ON \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
