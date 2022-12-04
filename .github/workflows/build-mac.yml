@@ -17,27 +17,38 @@ jobs:
           path: $(brew --prefix)
           key: ${{ runner.os }}-homebrew-${{ hashFiles('.config/brew/Brewfile') }}
 
+      - name: Setup ccache
+        uses: actions/cache@v3
+        with:
+          path: $HOME/Library/Cache/ccache
+          key: ${{ runner.os }}-ccache-opencv4.6.0-fastdeploy-1.0.0
+          restore-keys: ${{ runner.os }}-ccache-
+
       - name: Install Dependencies
         run: |
           brew update --preinstall
-          brew install ninja
+          brew install ccache ninja
 
       - name: Build OpenCV
         run: ./deps.opencv/build-opencv-macos.zsh
+
+      - name: Build Protobuf
+        run: ./deps.protobuf/build-protobuf-macos.zsh
+
+      - name: Build ONNXRuntime
+        run: ./deps.onnxruntime/build-onnxruntime-macos.zsh
+
+      - name: Build Paddle2ONNX
+        run: ./deps.paddle2onnx/build-paddle2onnx-macos.zsh
 
       - name: Build FastDeploy
         run: ./deps.fastdeploy/build-fastdeploy-macos.zsh
 
       - name: Package Libraries
-        run: |
-          mkdir -p maa-deps-macos-universal/lib
-          cp maa-deps-macos/lib/libopencv*.a maa-deps-macos-universal/lib
-          cp maa-deps-macos/lib/libfastdeploy.0.0.0.dylib maa-deps-macos-universal/lib
-          cp maa-deps-macos/*.cmake maa-deps-macos-universal
-          find maa-deps-macos/third_libs/install -type f -name "*.dylib" '!' -path "*dSYM*" | xargs -I '{}' cp '{}' maa-deps-macos-universal/lib
+        run: tar Jcf maa-deps-macos.tar.xz maa-deps-macos
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: maa-deps-macos-universal
-          path: maa-deps-macos-universal
+          path: maa-deps-macos.tar.xz

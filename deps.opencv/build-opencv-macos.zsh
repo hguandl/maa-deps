@@ -26,7 +26,7 @@ fi
 
 ## ----------  PATCH  ----------
 pushd ${SRC_PATH}
-patch -p1 -i ${PROJECT_PATH}/deps.opencv/macos-arch.patch
+patch -p1 --forward -i ${PROJECT_PATH}/deps.opencv/macos-arch.patch || true
 popd
 
 # ----------  BUILD  ----------
@@ -40,6 +40,8 @@ cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
     -DBUILD_SHARED_LIBS=OFF \
     -DBUILD_ZLIB=OFF \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}" \
     -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
     -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \

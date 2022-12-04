@@ -24,38 +24,28 @@ if [ ! -f "${SRC_PATH}/CMakeLists.txt" ]; then
     curl -fSL -o- https://github.com/PaddlePaddle/FastDeploy/archive/refs/tags/release/${FASTDEPLOY_VER}.tar.gz | tar -C ${SRC_ROOT} -zxf -
 fi
 
+## ----------  PATCH  ----------
+pushd ${SRC_PATH}
+patch -p1 --forward -i ${PROJECT_PATH}/deps.fastdeploy/static-libs.patch || true
+popd
+
 # ----------  BUILD  ----------
 
-function build_architecture() {
-    ARCH=$1
-    echo "Building FastDeploy ${OPENCV_VER} for ${ARCH}"
+echo "Building FastDeploy ${FASTDEPLOY_VER}"
 
-    cmake -S "${SRC_PATH}" -B "${BUILD_PATH}/${ARCH}" -GNinja \
-        -DCMAKE_INSTALL_PREFIX="${BUILD_PATH}/${ARCH}/compiled_fastdeploy_sdk" \
-        -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
-        -DENABLE_ORT_BACKEND=ON \
-        -DENABLE_VISION=ON \
-        -DOPENCV_DIRECTORY="${INSTALL_PATH}"
-    cmake --build "${BUILD_PATH}/${ARCH}"
-    cmake --install "${BUILD_PATH}/${ARCH}"
-}
+cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
+    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+    -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}" \
+    -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+    -DENABLE_ORT_BACKEND=ON \
+    -DENABLE_VISION=ON \
+    -DOPENCV_DIRECTORY="${INSTALL_PATH}" \
+    -DCUSTOM_DIRECTORY="${INSTALL_PATH}"
 
-build_architecture "arm64"
-build_architecture "x86_64"
+cmake --build "${BUILD_PATH}"
 
-echo "Creating universal binary"
-pushd ${BUILD_PATH}
-cp -R arm64/compiled_fastdeploy_sdk .
-pushd compiled_fastdeploy_sdk
-find . -type f -name "*.dylib" | while read i; do
-    lipo -create -output $i $i ../x86_64/compiled_fastdeploy_sdk/$i
-done
-popd
-popd
-
-# ----------  INSTALL  ----------
-
-rsync -a "${BUILD_PATH}/compiled_fastdeploy_sdk/" "${INSTALL_PATH}/"
+cp "${BUILD_PATH}/libfastdeploy.a" "${INSTALL_PATH}/lib"
 
 echo "FastDeploy build complete."

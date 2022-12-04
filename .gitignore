@@ -2,6 +2,7 @@
 /macos_build
 /maa-deps-macos
 maa-deps-macos*.zip
+maa-deps-macos*.tar.xz
 
 # Created by https://www.toptal.com/developers/gitignore/api/linux,macos,windows,cmake
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,windows,cmake
