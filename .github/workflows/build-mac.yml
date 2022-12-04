@@ -9,6 +9,13 @@ jobs:
   macos-latest:
     runs-on: macos-12
     steps:
+      - name: Setup Credentials
+        env:
+          SSH_PRIV_KEY: ${{ secrets.SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIV_KEY" >> ~/.ssh/id_ed25519
+
       - uses: actions/checkout@v3
 
       - name: Cache Homebrew
