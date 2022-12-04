@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: |
           brew update --preinstall
-          brew install ccache ninja
+          brew install ccache ninja python
 
       - name: Build OpenCV
         run: ./deps.opencv/build-opencv-macos.zsh

@@ -36,6 +36,7 @@ function build_architecture() {
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
         -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
         -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+        -DPYTHON_EXECUTABLE="$(brew --prefix python)/bin/python3" \
         -Donnxruntime_RUN_ONNX_TESTS=OFF \
         -Donnxruntime_GENERATE_TEST_REPORTS=OFF
 
