@@ -40,7 +40,8 @@ cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
     -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH} \
     -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-    -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+    -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+    -DPYTHON_EXECUTABLE="$(brew --prefix python)/bin/python3"
 
 cmake --build "${BUILD_PATH}/${ARCH}"
 cmake --install "${BUILD_PATH}/${ARCH}"
