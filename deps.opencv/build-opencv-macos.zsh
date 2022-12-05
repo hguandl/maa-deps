@@ -34,10 +34,13 @@ popd
 echo "Building OpenCV ${OPENCV_VER}"
 
 cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
+    -DBUILD_EXAMPLES=OFF \
     -DBUILD_JAVA=OFF \
     -DBUILD_opencv_apps=OFF \
     -DBUILD_opencv_python3=OFF \
+    -DBUILD_PERF_TESTS=OFF \
     -DBUILD_SHARED_LIBS=OFF \
+    -DBUILD_TESTS=OFF \
     -DBUILD_ZLIB=ON \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER_LAUNCHER=ccache \
@@ -46,8 +49,10 @@ cmake -S "${SRC_PATH}" -B "${BUILD_PATH}" -GNinja \
     -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
     -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
     -DOPENCV_FORCE_3RDPARTY_BUILD=ON \
+    -DWITH_EIGEN=OFF \
     -DWITH_FFMPEG=OFF \
     -DWITH_IPP=OFF \
+    -DWITH_LAPACK=OFF \
     -DWITH_PROTOBUF=OFF
 
 cmake --build "${BUILD_PATH}"
